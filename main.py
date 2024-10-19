@@ -8,7 +8,8 @@ def main() -> None:
         print('O que gostaria de fazer agora?')
         print('a) Adicionar uma tarefa.')
         print('d) Deletar uma tarefa.')
-        print('r) Realizar uma tarefa.')
+        print('r) Realizar uma tarefa aleatória.')
+        print('m) Marcar uma tarefa como finalizada.')
         print('v) Visualizar todas as tarefas.')
         print('e) Encerrar o programa.')
         return input('Sua resposta: ')
@@ -68,6 +69,26 @@ def main() -> None:
                         answer: str = ask()
                     case _:
                         answer: str = ask()
+            case 'm':
+                sql_comand: str = """
+                    SELECT
+                        id,
+                        tarefa,
+                        data_inicio
+                    FROM todo_list
+                    WHERE data_fim IS NULL;
+                """
+                df: DataFrame = sql.read(sql_comand)
+                print(f'\n{df.to_string(index=False)}\n')
+                id_chosen: int = int(input('Qual o id da tarefa finalizada? '))
+                sql_comand: str = f"""
+                    UPDATE todo_list
+                    SET data_fim = CURRENT_DATE
+                    WHERE id = {id_chosen};
+                """
+                sql.execute(sql_comand)
+                print(f'Tafera marcada como finalizada com sucesso.\n')
+                answer: str = ask()
             case 'v':
                 sql_comand: str = """
                     SELECT
