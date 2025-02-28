@@ -1,9 +1,15 @@
-import sql
-from pandas import DataFrame
 from random import choice
 
+from pandas import DataFrame
+
+from data import sql
+
+
 def main() -> None:
-    print('----Bem-vindo a sua lista de afazeres!----\n------------------------------------------\n')
+    print(
+        '----Bem-vindo a sua lista de afazeres!----\n------------------------------------------\n'
+    )
+
     def ask() -> str:
         print('O que gostaria de fazer agora?')
         print('a) Adicionar uma tarefa.')
@@ -13,7 +19,7 @@ def main() -> None:
         print('v) Visualizar todas as tarefas.')
         print('e) Encerrar o programa.')
         return input('Sua resposta: ')
-    
+
     answer: str = ask()
     while True:
         match answer.lower():
@@ -25,9 +31,9 @@ def main() -> None:
                 """
                 sql.execute(sql_comand)
                 print(f'Tafera adicionada com sucesso: {task}\n')
-                answer: str = ask()
+                answer = ask()
             case 'd':
-                sql_comand: str = """
+                sql_comand = """
                     SELECT
                         id,
                         tarefa,
@@ -38,15 +44,15 @@ def main() -> None:
                 df: DataFrame = sql.read(sql_comand)
                 print(f'\n{df.to_string(index=False)}\n')
                 id_chosen: int = int(input('Qual o id da tarefa a ser excluída? '))
-                sql_comand: str = f"""
+                sql_comand = f"""
                     DELETE FROM todo_list
                     WHERE id = {id_chosen};
                 """
                 sql.execute(sql_comand)
                 print(f'Tafera excluida com sucesso.\n')
-                answer: str = ask()
+                answer = ask()
             case 'r':
-                sql_comand: str = """
+                sql_comand = """
                     SELECT
                         id,
                         tarefa,
@@ -54,23 +60,27 @@ def main() -> None:
                     FROM todo_list
                     WHERE data_fim IS NULL;
                 """
-                df: DataFrame = sql.read(sql_comand)
-                id_chosen: list[int] = choice(df['id'])
-                print('\nA tarefa selecionada foi: {0}\n'.format(df[df['id'].eq(id_chosen)]['tarefa'].values[0]))
+                df = sql.read(sql_comand)
+                id_chosen = choice(df['id'])
+                print(
+                    '\nA tarefa selecionada foi: {0}\n'.format(
+                        df[df['id'].eq(id_chosen)]['tarefa'].values[0]
+                    )
+                )
                 realizada: str = input('Tarefa realizada? (s/n) ')
                 match realizada.lower():
                     case 's':
-                        sql_comand: str = f"""
+                        sql_comand = f"""
                             UPDATE todo_list
                             SET data_fim = CURRENT_DATE
                             WHERE id = {id_chosen};
                         """
                         sql.execute(sql_comand)
-                        answer: str = ask()
+                        answer = ask()
                     case _:
-                        answer: str = ask()
+                        answer = ask()
             case 'm':
-                sql_comand: str = """
+                sql_comand = """
                     SELECT
                         id,
                         tarefa,
@@ -78,19 +88,19 @@ def main() -> None:
                     FROM todo_list
                     WHERE data_fim IS NULL;
                 """
-                df: DataFrame = sql.read(sql_comand)
+                df = sql.read(sql_comand)
                 print(f'\n{df.to_string(index=False)}\n')
-                id_chosen: int = int(input('Qual o id da tarefa finalizada? '))
-                sql_comand: str = f"""
+                id_chosen = int(input('Qual o id da tarefa finalizada? '))
+                sql_comand = f"""
                     UPDATE todo_list
                     SET data_fim = CURRENT_DATE
                     WHERE id = {id_chosen};
                 """
                 sql.execute(sql_comand)
                 print(f'Tafera marcada como finalizada com sucesso.\n')
-                answer: str = ask()
+                answer = ask()
             case 'v':
-                sql_comand: str = """
+                sql_comand = """
                     SELECT
                         CASE WHEN data_fim IS NULL THEN 'Não realizada' ELSE 'Realizada' END AS status,
                         tarefa,
@@ -98,14 +108,15 @@ def main() -> None:
                         data_fim
                     FROM todo_list;
                 """
-                df: DataFrame = sql.read(sql_comand)
+                df = sql.read(sql_comand)
                 print(f'\n{df}\n')
-                answer: str = ask()
+                answer = ask()
             case 'e':
                 break
             case _:
                 print('\nPor favor, envie uma resposta apropriada.\n')
-                answer: str = ask()
+                answer = ask()
+
 
 if '__main__' == __name__:
     main()
