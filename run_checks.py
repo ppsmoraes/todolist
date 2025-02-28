@@ -14,6 +14,7 @@ def run_checks(target: str) -> None:
     commands = [
         ['isort', target],
         ['black', target, '-S'],
+        ['pydocstyle', target],
         ['mypy', '--namespace-packages', '--explicit-package-bases', target],
     ]
 
